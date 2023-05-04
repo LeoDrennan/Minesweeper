@@ -28,9 +28,9 @@ namespace Minesweeper
         public MainWindow()
         {
             // Window and grid size declaration
-            const int columns = 10;
-            const int rows = 10;
-            const int mines = 10;
+            const int columns = 16;
+            const int rows = 16;
+            const int mines = 40;
             Application.Current.MainWindow.Height = 35 * rows + 70;
             Application.Current.MainWindow.Width = 35 * columns;
 
@@ -175,14 +175,12 @@ namespace Minesweeper
             GridButton pressedButton = sender as GridButton;
             if (!pressedButton.isFlag)
             {
-                pressedButton.pressed = true;
                 if (pressedButton.type == "number")
                 {
                     pressedButton.revealIdentity();
                 }
                 else if (pressedButton.type == "zero")
                 {
-                    pressedButton.revealIdentity();
                     minefieldGrid.revealZeroes(pressedButton.xLoc, pressedButton.yLoc);
                 }
                 else
@@ -219,20 +217,22 @@ namespace Minesweeper
             string flagEmoji = "\uD83D" + "\uDEA9";
 
 
-
             public void revealIdentity()
             {
-                if (this.hiddenContent != '*')
+                if (this.type == "number")
                 {
+                    this.pressed = true;
                     this.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#eff3ba");
                     this.Content = this.hiddenContent;
                 }
-                else if (this.hiddenContent == ' ')
+                else if (this.type == "zero")
                 {
+                    this.pressed = true;
                     this.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#eff3ba");
                 }
-                else if (this.hiddenContent == '*')
+                else if (this.type == "mine")
                 {
+                    this.pressed = true;
                     this.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF0000");
                     this.Content = this.hiddenContent;
                 }

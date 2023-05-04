@@ -31,15 +31,26 @@ public class MineGrid : Grid
         {
             for (int j = column - 1; j<= column + 1; j++)
             {
-                if (i >= 0 && i < rows && j >= 0 && j < columns)
+                if (i >= 0 && i < rows && j >= 0 && j < columns && minefieldButtons[i, j].pressed == false && minefieldButtons[i, j]. type != "zero")
                 {
-                    if (minefieldButtons[i, j].type == "zero")
-                    {
-                    }
                     minefieldButtons[i, j].revealIdentity();
                 }
             }
         }
+
+        for (int i = row - 1; i <= row + 1; i++)
+        {
+            for (int j = column - 1; j <= column + 1; j++)
+            {
+                if (i >= 0 && i < rows && j >= 0 && j < columns && minefieldButtons[i, j].pressed == false && minefieldButtons[i, j].type == "zero")
+                {
+                    minefieldButtons[i, j].revealIdentity();
+                    revealZeroes(i, j);
+                }
+            }
+        }
+
+
         return;
     }
 }
