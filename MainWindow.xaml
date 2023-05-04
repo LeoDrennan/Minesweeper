@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp3"
         mc:Ignorable="d"
-        Title="Minesweeper" ResizeMode="NoResize">
+        Title="Minesweeper" ResizeMode="NoResize" MinWidth="280">
     <Grid Name="contentOrganiser">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -17,7 +17,7 @@
         <Button Name="reset" Grid.Row="0" Height="30" Width="60" Click="resetClick">Reset</Button>
         <Grid Name="minesweeper" Grid.Row="1" Margin="10 10 10 10" VerticalAlignment="Center" HorizontalAlignment="Center">
         </Grid>
-        <TextBlock HorizontalAlignment="Left" Margin="40,0,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" Grid.Row="0" Name="Flags"/>
+        <TextBlock HorizontalAlignment="Left" Margin="20,0,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" Grid.Row="0" Name="Flags"/>
     </Grid>
 
 </Window>

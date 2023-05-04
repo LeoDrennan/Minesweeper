@@ -189,6 +189,5 @@ namespace Minesweeper
                 pressedButton.placeFlag(pressedButton.isFlag);
             }
         }
-
     }
 }

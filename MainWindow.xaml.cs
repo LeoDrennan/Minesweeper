@@ -44,7 +44,7 @@ namespace Minesweeper
             minesweeper.Children.Add(gameInstance);
         }
 
-        public void resetClick (object sender, RoutedEventArgs e)
+        public void resetClick(object sender, RoutedEventArgs e)
         {
             minesweeper.Children.Clear();
             GameManager nextGame = new GameManager();
