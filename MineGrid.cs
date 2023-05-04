@@ -49,8 +49,6 @@ public class MineGrid : Grid
                 }
             }
         }
-
-
         return;
     }
 }
