@@ -24,6 +24,7 @@ namespace Minesweeper
     /// </summary>
     public partial class MainWindow : Window
     {
+        MineGrid minefieldGrid;
         public MainWindow()
         {
             // Window and grid size declaration
@@ -35,10 +36,9 @@ namespace Minesweeper
 
             InitializeComponent();
 
-
             char[,] minefield = populateMinefield(rows, columns, mines);
-            gridButton[,] gameButtons = createButtons(rows, columns, minefield);
-            createGrid(rows, columns, gameButtons);
+            GridButton[,] gameButtons = createButtons(rows, columns, minefield);
+            minefieldGrid = createGrid(rows, columns, gameButtons);
         }
 
         public char[,] populateMinefield(int rows, int columns, int bombs)
@@ -99,16 +99,16 @@ namespace Minesweeper
             return mineGrid;
         }
 
-        public gridButton[,] createButtons(int rows, int columns, char[,] minefield)
+        public GridButton[,] createButtons(int rows, int columns, char[,] minefield)
         {
             int count = 1;
-            gridButton[,] gameButtons = new gridButton[rows, columns];
+            GridButton[,] gameButtons = new GridButton[rows, columns];
 
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    gridButton btn = new gridButton();
+                    GridButton btn = new GridButton();
                     btn.xLoc = i;
                     btn.yLoc = j;
                     btn.Name = "button" + count.ToString();
@@ -124,7 +124,7 @@ namespace Minesweeper
                         case '*':
                             btn.type = "mine";
                             break;
-                        case '0':
+                        case ' ':
                             btn.type = "zero";
                             break;
                         default:
@@ -143,9 +143,9 @@ namespace Minesweeper
             return gameButtons;
         }
 
-        public void createGrid(int rows, int columns, gridButton[,] minefield)
+        public MineGrid createGrid(int rows, int columns, GridButton[,] minefield)
         {
-            mineGrid minesweeper = new mineGrid();
+            MineGrid minesweeper = new MineGrid();
             minesweeper.rows = rows;
             minesweeper.columns = columns;
             minesweeper.minefieldButtons = minefield;
@@ -165,24 +165,29 @@ namespace Minesweeper
                 ColumnDefinition columnDefinition = new ColumnDefinition();
                 columnDefinition.Width = new GridLength(30);
                 this.minesweeper.ColumnDefinitions.Add(columnDefinition);
-
             }
+
+            return minesweeper;
         }
 
         public void buttonClick(object sender, RoutedEventArgs e)
         {
-            gridButton pressedButton = sender as gridButton;
+            GridButton pressedButton = sender as GridButton;
             if (!pressedButton.isFlag)
             {
                 pressedButton.pressed = true;
-                if (pressedButton.type != "*")
+                if (pressedButton.type == "number")
                 {
                     pressedButton.revealIdentity();
                 }
+                else if (pressedButton.type == "zero")
+                {
+                    pressedButton.revealIdentity();
+                    minefieldGrid.revealZeroes(pressedButton.xLoc, pressedButton.yLoc);
+                }
                 else
                 {
-                    mineGrid currentGame = sender as mineGrid;
-                    currentGame.showAllMines();
+                    minefieldGrid.showAllMines();
                 }
             }
             
@@ -190,7 +195,7 @@ namespace Minesweeper
 
         public void rightClick(object sender, RoutedEventArgs e)
         {
-            gridButton pressedButton = sender as gridButton;
+            GridButton pressedButton = sender as GridButton;
             if (pressedButton.pressed == false && pressedButton.isFlag == false)
             {
                 pressedButton.isFlag = true;
@@ -203,7 +208,7 @@ namespace Minesweeper
             }
         }
 
-        public class gridButton : Button
+        public class GridButton : Button
         {
             public int xLoc;
             public int yLoc;
@@ -212,6 +217,8 @@ namespace Minesweeper
             public bool isFlag;
             public string type;
             string flagEmoji = "\uD83D" + "\uDEA9";
+
+
 
             public void revealIdentity()
             {
@@ -228,7 +235,6 @@ namespace Minesweeper
                 {
                     this.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF0000");
                     this.Content = this.hiddenContent;
-
                 }
                 return;
             }
@@ -244,29 +250,6 @@ namespace Minesweeper
                         this.Content = ' ';
                         break;
                 }
-            }
-        }
-
-        public class mineGrid : Grid
-        {
-            public int rows;
-            public int columns;
-            public gridButton[,] minefieldButtons;
-
-            public void showAllMines()
-            {
-                for (int i = 0; i < rows; i++)
-                {
-                    for (int j = 0; j < columns; j++)
-                    {
-                        if (minefieldButtons[i,j].type == "mine")
-                        {
-                            minefieldButtons[i, j].Content = minefieldButtons[i, j].hiddenContent;
-                            minefieldButtons[i, j].Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF0000");
-                        }
-                    }
-                }
-                return;
             }
         }
     }
