@@ -18,6 +18,7 @@ public class GridButton : Button
     {
         if (this.type == "number")
         {
+
             this.pressed = true;
             this.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#eff3ba");
             this.Content = this.hiddenContent;

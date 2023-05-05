@@ -24,32 +24,79 @@ namespace Minesweeper
     /// </summary>
     public partial class MainWindow : Window
     {
+        int rows;
+        int columns;
+        int mines;
         MineGrid gameInstance;
+
         public MainWindow()
         {
             InitializeComponent();
 
             // Window and grid size declaration
-            const int columns = 16;
-            const int rows = 16;
-            const int mines = 40;
+            rows = 16;
+            columns = 16;
+            mines = 40;
+            formatWindow();
+        }
 
+        private void formatWindow()
+        {
             // Dynamically change window properties according to grid size
-            Application.Current.MainWindow.Height = 35 * rows + 70;
+            Application.Current.MainWindow.Height = 40 * rows + 100;
             Application.Current.MainWindow.Width = 35 * columns;
 
             // Create a new game layout and add to view
             GameManager newGame = new GameManager();
-            gameInstance = newGame.createGame(rows, columns, mines);
+            newGame.totalRows = rows;
+            newGame.totalCols = columns;
+            newGame.totalMines = mines;
+            gameInstance = newGame.createGame();
             minesweeper.Children.Add(gameInstance);
         }
 
+        // Delete current game and create a new game
         public void resetClick(object sender, RoutedEventArgs e)
         {
             minesweeper.Children.Clear();
             GameManager nextGame = new GameManager();
-            MineGrid nextInstance = nextGame.createGame(16, 16, 40);
+            nextGame.totalRows = rows;
+            nextGame.totalCols = columns;
+            nextGame.totalMines = mines;
+            MineGrid nextInstance = nextGame.createGame();
             minesweeper.Children.Add(nextInstance);
+        }
+
+        // Check for currently selected difficulty and create a new game with that criteria
+        public void changeDifficulty(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBoxItem test = (ComboBoxItem)difficultySelect.SelectedItem;
+
+            switch (test.Name)
+            {
+                case "Beginner":
+                    rows = 8;
+                    columns = 8;
+                    mines = 10;
+                    minesweeper.Children.Clear();
+                    formatWindow();
+                    break;
+                case "Intermediate":
+                    rows = 16;
+                    columns = 16;
+                    mines = 40;
+                    minesweeper.Children.Clear();
+                    formatWindow();
+                    break;
+                case "Expert":
+                    rows = 16;
+                    columns = 30;
+                    mines = 99;
+                    minesweeper.Children.Clear();
+                    formatWindow();
+                    break;
+            }
+            return;
         }
     }
 }

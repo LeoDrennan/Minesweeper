@@ -5,19 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp3"
         mc:Ignorable="d"
-        Title="Minesweeper" ResizeMode="NoResize" MinWidth="280">
+        Title="Minesweeper" ResizeMode="NoResize" MinWidth="280" WindowStartupLocation="CenterScreen">
     <Grid Name="contentOrganiser">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="10*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="50"/>
+            <ColumnDefinition MinWidth="280"/>
         </Grid.ColumnDefinitions>
         <Button Name="reset" Grid.Row="0" Height="30" Width="60" Click="resetClick">Reset</Button>
+        <ComboBox Name="difficultySelect" HorizontalAlignment="Left" Margin="4,0,0,0" VerticalAlignment="Center" Width="100" Grid.Row="0" SelectionChanged="changeDifficulty">
+            <ComboBoxItem Name="Beginner">Beginner</ComboBoxItem>
+            <ComboBoxItem Name="Intermediate">Intermediate</ComboBoxItem>
+            <ComboBoxItem Name="Expert">Expert</ComboBoxItem>
+        </ComboBox>
         <Grid Name="minesweeper" Grid.Row="1" Margin="10 10 10 10" VerticalAlignment="Center" HorizontalAlignment="Center">
         </Grid>
-        <TextBlock HorizontalAlignment="Left" Margin="20,0,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" Grid.Row="0" Name="Flags"/>
     </Grid>
 
 </Window>

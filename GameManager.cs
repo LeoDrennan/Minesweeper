@@ -2,7 +2,9 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using static Minesweeper.MainWindow;
 
 namespace Minesweeper
@@ -12,17 +14,25 @@ namespace Minesweeper
         public int totalRows;
         public int totalCols;
         public int totalMines;
+        private int targetScore;
         MineGrid minefieldGrid;
         MineGrid minesweeper = new MineGrid();
 
-        public MineGrid createGame(int rows, int columns, int mines)
+        public MineGrid createGame()
         {
             // Initialise game grid
-            char[,] minefield = populateMinefield(rows, columns, mines);
-            GridButton[,] gameButtons = createButtons(rows, columns, minefield);
-            minefieldGrid = createGrid(rows, columns, gameButtons);
+            char[,] minefield = populateMinefield(totalRows, totalCols, totalMines);
+            GridButton[,] gameButtons = createButtons(totalRows, totalCols, minefield);
+            minefieldGrid = createGrid(totalRows, totalCols, gameButtons);
+            this.targetScore = winCondition();
             
             return minefieldGrid;
+        }
+
+        private int winCondition()
+        {
+            int targetScore = totalRows * totalCols - totalMines;
+            return targetScore;
         }
 
         private char[,] populateMinefield(int rows, int columns, int bombs)
@@ -30,6 +40,7 @@ namespace Minesweeper
             char[,] mineGrid = new char[rows, columns];
             Random rnd = new Random();
 
+            // Randomly distibute bombs
             int counter = 0;
             while (counter < bombs)
             {
@@ -43,6 +54,7 @@ namespace Minesweeper
                 }
             }
 
+            // Fill empty squares with number of adjacent bombs
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < columns; j++)
@@ -58,6 +70,7 @@ namespace Minesweeper
 
         private char[,] neighbouringMines(char[,] mineGrid, int row, int column, int totalRows, int totalColumns)
         {
+            // Search in 1x1 grid around cell for bombs
             int mineCount = 0;
             for (int i = row - 1; i <= row + 1; i++)
             {
@@ -70,6 +83,7 @@ namespace Minesweeper
                 }
             }
 
+            // Format cell content for game
             if (mineCount == 0)
             {
                 mineGrid[row, column] = ' ';
@@ -92,6 +106,7 @@ namespace Minesweeper
             {
                 for (int j = 0; j < columns; j++)
                 {
+                    // Create button and assign properties
                     GridButton btn = new GridButton();
                     btn.xLoc = i;
                     btn.yLoc = j;
@@ -103,6 +118,7 @@ namespace Minesweeper
                     btn.Content = '\0';
                     btn.hiddenContent = minefield[i, j];
 
+                    // Define button type 
                     switch (btn.hiddenContent)
                     {
                         case '*':
@@ -129,14 +145,16 @@ namespace Minesweeper
 
         private MineGrid createGrid(int rows, int columns, GridButton[,] minefield)
         {
-
+            // set 
             minesweeper.rows = rows;
             minesweeper.columns = columns;
             minesweeper.minefieldButtons = minefield;
 
+            // Formatting for view
             minesweeper.HorizontalAlignment = HorizontalAlignment.Center;
             minesweeper.VerticalAlignment = VerticalAlignment.Center;
 
+            // Define X and Y for grid in view
             for (int i = 0; i < rows; i++)
             {
                 RowDefinition rowDefinition = new RowDefinition();
@@ -154,8 +172,32 @@ namespace Minesweeper
             return minesweeper;
         }
 
+        private void disableButtons()
+        {
+            for (int i = 0; i < totalRows; i++)
+            {
+                for (int j = 0; j < totalCols; j++)
+                {
+                    minefieldGrid.minefieldButtons[i, j].Click -= buttonClick;
+                    minefieldGrid.minefieldButtons[i, j].MouseRightButtonUp -= rightClick;
+                }
+            }
+        }
+
+        private void showWinScreen()
+        {
+            bool hasWon = minefieldGrid.checkWinCon(targetScore, totalMines);
+            if (hasWon)
+            {
+                disableButtons();
+                MessageBoxButton winscreen = MessageBoxButton.YesNo;
+                MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow, "You have won!");
+            }
+        }
+
         private void buttonClick(object sender, RoutedEventArgs e)
         {
+            // Logic for dealing with all cases when a tile is clicked
             GridButton pressedButton = sender as GridButton;
             if (!pressedButton.isFlag)
             {
@@ -170,13 +212,15 @@ namespace Minesweeper
                 else
                 {
                     minefieldGrid.showAllMines();
+                    disableButtons();
                 }
             }
-
+            showWinScreen();
         }
 
         private void rightClick(object sender, RoutedEventArgs e)
         {
+            // Place or remove a flag when a tile is right clicked
             GridButton pressedButton = sender as GridButton;
             if (pressedButton.pressed == false && pressedButton.isFlag == false)
             {
@@ -188,6 +232,7 @@ namespace Minesweeper
                 pressedButton.isFlag = false;
                 pressedButton.placeFlag(pressedButton.isFlag);
             }
+            showWinScreen();
         }
     }
 }
