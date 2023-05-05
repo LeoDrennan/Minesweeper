@@ -24,17 +24,19 @@ namespace Minesweeper
             char[,] minefield = populateMinefield(totalRows, totalCols, totalMines);
             GridButton[,] gameButtons = createButtons(totalRows, totalCols, minefield);
             minefieldGrid = createGrid(totalRows, totalCols, gameButtons);
-            this.targetScore = winCondition();
+            this.targetScore = setWinCondition();
             
             return minefieldGrid;
         }
 
-        private int winCondition()
+        // Calculate the number of button presses required to win for this game iteration
+        private int setWinCondition()
         {
             int targetScore = totalRows * totalCols - totalMines;
             return targetScore;
         }
 
+        // Populate a 2D array with a randomised gamestate
         private char[,] populateMinefield(int rows, int columns, int bombs)
         {
             char[,] mineGrid = new char[rows, columns];
@@ -68,6 +70,7 @@ namespace Minesweeper
             return mineGrid;
         }
 
+        // Helper function for populateMinefield
         private char[,] neighbouringMines(char[,] mineGrid, int row, int column, int totalRows, int totalColumns)
         {
             // Search in 1x1 grid around cell for bombs
@@ -83,7 +86,7 @@ namespace Minesweeper
                 }
             }
 
-            // Format cell content for game
+            // Format cell content for char array
             if (mineCount == 0)
             {
                 mineGrid[row, column] = ' ';
@@ -97,6 +100,7 @@ namespace Minesweeper
             return mineGrid;
         }
 
+        // Convert 2D array to an array of gridButton objects
         private GridButton[,] createButtons(int rows, int columns, char[,] minefield)
         {
             int count = 1;
@@ -143,6 +147,7 @@ namespace Minesweeper
             return gameButtons;
         }
 
+        // Create mineGrid with necessary properties for this game iteration
         private MineGrid createGrid(int rows, int columns, GridButton[,] minefield)
         {
             // set 
@@ -172,43 +177,25 @@ namespace Minesweeper
             return minesweeper;
         }
 
-        private void disableButtons()
-        {
-            for (int i = 0; i < totalRows; i++)
-            {
-                for (int j = 0; j < totalCols; j++)
-                {
-                    minefieldGrid.minefieldButtons[i, j].Click -= buttonClick;
-                    minefieldGrid.minefieldButtons[i, j].MouseRightButtonUp -= rightClick;
-                }
-            }
-        }
-
-        private void showWinScreen()
-        {
-            bool hasWon = minefieldGrid.checkWinCon(targetScore, totalMines);
-            if (hasWon)
-            {
-                disableButtons();
-                MessageBoxButton winscreen = MessageBoxButton.YesNo;
-                MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow, "You have won!");
-            }
-        }
-
+        // Determines left click behaviour dependant on button type
         private void buttonClick(object sender, RoutedEventArgs e)
         {
-            // Logic for dealing with all cases when a tile is clicked
             GridButton pressedButton = sender as GridButton;
             if (!pressedButton.isFlag)
             {
+                // Reveal single tile if pressed button is a value between 1-8
                 if (pressedButton.type == "number")
                 {
                     pressedButton.revealIdentity();
                 }
+
+                // Reveal all adjacent zeroes if pressed button is a mine
                 else if (pressedButton.type == "zero")
                 {
                     minefieldGrid.revealZeroes(pressedButton.xLoc, pressedButton.yLoc);
                 }
+
+                // Reveal all mines if pressed button is a mine
                 else
                 {
                     minefieldGrid.showAllMines();
@@ -222,17 +209,45 @@ namespace Minesweeper
         {
             // Place or remove a flag when a tile is right clicked
             GridButton pressedButton = sender as GridButton;
+
+            // If cell is not already a flag
             if (pressedButton.pressed == false && pressedButton.isFlag == false)
             {
                 pressedButton.isFlag = true;
                 pressedButton.placeFlag(pressedButton.isFlag);
             }
+
+            // If cell is already a flag
             else if (pressedButton.pressed == false && pressedButton.isFlag == true)
             {
                 pressedButton.isFlag = false;
                 pressedButton.placeFlag(pressedButton.isFlag);
             }
             showWinScreen();
+        }
+
+        // Remove onclick function from buttons if game is won or lost
+        private void disableButtons()
+        {
+            for (int i = 0; i < totalRows; i++)
+            {
+                for (int j = 0; j < totalCols; j++)
+                {
+                    minefieldGrid.minefieldButtons[i, j].Click -= buttonClick;
+                    minefieldGrid.minefieldButtons[i, j].MouseRightButtonUp -= rightClick;
+                }
+            }
+        }
+
+        // If game has been won, show the win screen to the user
+        private void showWinScreen()
+        {
+            bool hasWon = minefieldGrid.checkWinCon(targetScore, totalMines);
+            if (hasWon)
+            {
+                disableButtons();
+                MessageBox.Show(Application.Current.MainWindow, "You have won!");
+            }
         }
     }
 }

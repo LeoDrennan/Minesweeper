@@ -33,18 +33,19 @@ namespace Minesweeper
         {
             InitializeComponent();
 
-            // Window and grid size declaration
+            // Default game difficulty is intermediate
             rows = 16;
             columns = 16;
-            mines = 40;
+            mines = 1;
             formatWindow();
         }
 
+        // Set window properties
         private void formatWindow()
         {
             // Dynamically change window properties according to grid size
-            Application.Current.MainWindow.Height = 40 * rows + 100;
-            Application.Current.MainWindow.Width = 35 * columns;
+            Application.Current.MainWindow.Height = 40 * rows + 90;
+            Application.Current.MainWindow.Width = 35 * columns + 20;
 
             // Create a new game layout and add to view
             GameManager newGame = new GameManager();

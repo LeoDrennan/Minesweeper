@@ -13,12 +13,11 @@ public class GridButton : Button
     public string type;
     string flagEmoji = "\uD83D" + "\uDEA9";
 
-
+    // Style button appropriately depending on whether it is a mine etc.
     public void revealIdentity()
     {
         if (this.type == "number")
         {
-
             this.pressed = true;
             this.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#eff3ba");
             this.Content = this.hiddenContent;
@@ -37,6 +36,7 @@ public class GridButton : Button
         return;
     }
 
+    // Add or remove flag from pressed tile
     public void placeFlag(bool isFlag)
     {
         switch (isFlag)

@@ -9,6 +9,7 @@ public class MineGrid : Grid
     public int columns;
     public GridButton[,] minefieldButtons;
 
+    // Reveal all mines in the current grid
     public void showAllMines()
     {
         for (int i = 0; i < rows; i++)
@@ -25,17 +26,20 @@ public class MineGrid : Grid
         return;
     }
 
+    // Reveal 1x1 area surrounding a location, recursively doing the same for all neighbouring zeroes found
     public void revealZeroes(int row, int column)
     {
         for (int i = row - 1; i <= row + 1; i++)
         {
             for (int j = column - 1; j <= column + 1; j++)
             {
+                // Check cell is within bounds. If yes and the cell is not a zero, reveal it.
                 if (i >= 0 && i < rows && j >= 0 && j < columns && minefieldButtons[i, j].pressed == false && minefieldButtons[i, j].type != "zero")
                 {
                     minefieldButtons[i, j].revealIdentity();
                 }
 
+                // Check cell is within bounds. If yes and the cell is a zero, reveal it and call function on that cell.
                 else if (i >= 0 && i < rows && j >= 0 && j < columns && minefieldButtons[i, j].pressed == false && minefieldButtons[i, j].type == "zero")
                 {
                     minefieldButtons[i, j].revealIdentity();
@@ -46,6 +50,7 @@ public class MineGrid : Grid
         return;
     }
 
+    // Check current game state and return true or false for whether the game has been won
     public bool checkWinCon(int targetScore, int totalMines)
     {
         bool won = false;
